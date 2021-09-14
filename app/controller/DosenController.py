@@ -1,5 +1,6 @@
 from app.model.dosen import Dosen
 from app.model.mahasiswa import Mahasiswa
+from app.controller.MahasiswaController import formatArrayMahasiswa
 from app import response, app, db
 from flask import request
 
@@ -57,19 +58,17 @@ def formatDetailDosen(dosen, mahasiswa):
 
     return data
 
-def singleMahasiswa(data):
-    mahasiswa = {
-        'id' : data.id,
-        'nim' : data.nim,
-        'nama' : data.nama,
-        'phone' : data.phone
-    }
+def saveDataDosen():
+    try:
+        input_nidn = request.form.get('nidn')
+        input_nama = request.form.get('nama')
+        input_phone = request.form.get('phone')
+        input_alamat = request.form.get('alamat')
 
-    return mahasiswa
+        dosen = Dosen(nidn=input_nidn, nama=input_nama, phone=input_phone, alamat=input_alamat)
+        db.session.add(dosen)
+        db.session.commit()
 
-def formatArrayMahasiswa(data):
-    arrayMahasiswa = []
-    for i in data:
-        arrayMahasiswa.append(singleMahasiswa(i))
-
-    return arrayMahasiswa
+        return response.success('', 'Sukses Menambahkan Data Dosen')
+    except Exception as e:
+        print(e)
